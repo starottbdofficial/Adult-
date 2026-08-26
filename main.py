@@ -14,7 +14,7 @@ def create_playlist():
     json_url = "http://plex.uskamlesh3.serv00.net/adult-movies.json"
     base_url = "http://plex.uskamlesh3.serv00.net/"
     
-    # নতুন দুটি প্লেলিস্ট
+    # দুটি প্লেলিস্ট
     playlist_1 = "http://adultiptv.net/chs.m3u"
     playlist_2 = "https://raw.githubusercontent.com/johirxofficial/otv-auto-updated-playlist/main/otv.m3u"
     
@@ -32,8 +32,10 @@ def create_playlist():
         f.write("#EXTINF:-1,Telegram: https://t.me/ibstvbd\n")
         f.write("#EXTINF:-1,Our official partner : IBS TV. STAR SHARE. OPPLEX.\n\n")
         
-        # ১. প্রথম প্লেলিস্ট লোড (সব কন্টেন্ট)
-        f.write(fetch_m3u(playlist_1).replace("#EXTM3U", "") + "\n")
+        # ১. প্রথম প্লেলিস্ট লোড (http কে https এ রূপান্তর করে সব কন্টেন্ট)
+        p1_content = fetch_m3u(playlist_1).replace("#EXTM3U", "")
+        p1_content_https = p1_content.replace("http://", "https://")
+        f.write(p1_content_https + "\n")
         
         # ২. দ্বিতীয় প্লেলিস্ট থেকে শুধু "XXX" গ্রুপ ফিল্টার করা
         otv_content = fetch_m3u(playlist_2)
