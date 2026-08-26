@@ -14,9 +14,13 @@ def fetch_m3u(url):
         return ""
 
 def process_extinf(line):
-    """#EXTINF লাইনে ব্যাকআপ লোগো যুক্ত করা এবং HTTP -> HTTPS করা"""
+    """EXTINF বা #EXTINF লাইনে ব্যাকআপ লোগো যুক্ত করা এবং HTTP -> HTTPS করা"""
     line = line.replace("http://", "https://")
     
+    # যদি লাইনের শুরুতে # না থাকে, তবে তা যুক্ত করা
+    if line.startswith("EXTINF"):
+        line = "#" + line
+
     # tvg-logo ট্যাগ আছে কিনা চেক করা
     match = re.search(r'tvg-logo="([^"]*)"', line)
     
@@ -27,7 +31,8 @@ def process_extinf(line):
             line = re.sub(r'tvg-logo="[^"]*"', f'tvg-logo="{BACKUP_LOGO}"', line)
     else:
         # যদি tvg-logo ট্যাগটি একেবারেই না থাকে
-        line = line.replace('#EXTINF:-1', f'#EXTINF:-1 tvg-logo="{BACKUP_LOGO}"')
+        # EXTINF:-1, EXTINF:0 বা #EXTINF:-1 ইত্যাদি সব ধরনের প্যাটার্ন হ্যান্ডেল করার জন্য
+        line = re.sub(r'^(#?EXTINF:[-\d]+)', r'\1 tvg-logo="' + BACKUP_LOGO + '"', line)
         
     return line
 
@@ -55,7 +60,7 @@ def create_playlist():
         p1_content = fetch_m3u(playlist_1).replace("#EXTM3U", "").strip()
         p1_lines = p1_content.splitlines()
         for line in p1_lines:
-            if line.startswith("#EXTINF"):
+            if line.startswith("#EXTINF") or line.startswith("EXTINF"):
                 f.write(process_extinf(line) + "\n")
             elif line.strip():
                 f.write(line.replace("http://", "https://") + "\n")
@@ -64,7 +69,7 @@ def create_playlist():
         otv_content = fetch_m3u(playlist_2)
         lines = otv_content.splitlines()
         for i in range(len(lines)):
-            if "XXX" in lines[i] and lines[i].startswith("#EXTINF"):
+            if "XXX" in lines[i] and (lines[i].startswith("#EXTINF") or lines[i].startswith("EXTINF")):
                 f.write(process_extinf(lines[i]) + "\n")
                 if i + 1 < len(lines):
                     f.write(lines[i+1].replace("http://", "https://") + "\n")
@@ -77,7 +82,6 @@ def create_playlist():
                 name = item.get("name", "Unknown")
                 logo = item.get("logo", "").strip()
                 
-                # লোগো না থাকলে বা খালি থাকলে ব্যাকআপ লোগো সেট করা
                 if not logo:
                     logo = BACKUP_LOGO
                 else:
