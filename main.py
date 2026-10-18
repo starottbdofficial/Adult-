@@ -41,7 +41,7 @@ def create_playlist():
     base_url = "https://plex.uskamlesh3.serv00.net/"
     
     playlist_1 = "http://adultiptv.net/chs.m3u"
-    playlist_2 = "https://raw.githubusercontent.com/johirxofficial/otv-auto-updated-playlist/main/otv.m3u"
+    playlist_2 = "server 3"
     
     output_file = "playlist.m3u"
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
