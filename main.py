@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 # ব্যাকআপ ইমেজের ইউআরএল
-BACKUP_LOGO = "https://www.rexporn.st/static/pretty-girl-naomi-woods-is-already-an-adult-.-at-the-most-she-thinks-so.jpg"
+BACKUP_LOGO = "https://github.com/starottbdofficial/ibstv_01610598422/blob/main/20260902_045900.png?raw=true"
 
 def fetch_m3u(url):
     try:
